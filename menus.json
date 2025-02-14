@@ -1,0 +1,97 @@
+{
+	"menus":{
+		"none_menu": {
+			"text":"Это меню ещё не создано",
+			"buttons":{},
+			"return":"main"
+		},
+
+		"update_tta": {
+			"text":"Бот был обновлён до новой версии!\nИспользуйте команду /start, что бы продолжить"
+		},
+
+		"main":{
+			"text":"Выберите комплекс",
+			"buttons":{
+				"select_course:ros":"Российская",
+				"select_course:blux":"Блюхера"
+			},
+			"function":"registration"
+
+		},
+
+		"select_course":{
+			"text":"Выберите курс",
+			"create_buttons":"get_courses",
+			"return":"main",
+			"function":"save_complex",
+			"loading":"_Получение курсов..._"
+
+		},
+
+		"select_group":{
+			"text":"Выберите группу",
+			"create_buttons":"select_group",
+			"return":"select_course",
+			"width":"4",
+			"loading":"_Получение групп..._"
+
+		},
+
+		"select_schedule":{
+			"width":"3",
+			"text":"*Группа:* _{user_group}_\n*Сегодня* __{day_week}__",
+			"buttons":{
+				"day:Понедельник":"Понедельник",
+				"day:Вторник":"Вторник",
+				"day:Среда":"Среда",
+				"day:Четверг":"Четверг",
+				"day:Пятница":"Пятница",
+				"day:Суббота":"Суббота",
+				"url:https://falpin.ru/schedule/{user_group}":"Открыть",
+				"day:full":"Неделя"
+			},
+			"return":"select_course",
+			"function":"insert_group"
+		},
+
+		"day":{
+			"function":"schedule",
+			"return":"select_schedule",
+			"loading":"_Загрузка расписания..._"
+		},
+
+		"week":{
+			"function":"week",
+			"return":"main"
+		}
+	},
+
+	"commands":{
+		"start":{
+			"menu":"main",
+			"text":"Перезапуск бота"
+		},
+
+		"day":{
+			"menu":"day:today",
+			"text":"Сегодня"
+		},
+
+		"tomorrow":{
+			"menu":"day:tomorrow",
+			"text":"Завтра"
+		},
+
+		"week":{
+			"menu":"day:full",
+			"text":"На наделю"
+		}
+	},
+
+	"general_buttons":{
+		"return":"< Назад",
+		"admin":"Администратор",
+		"notification":"Прочитано"
+	}
+}

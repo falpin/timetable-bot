@@ -5,6 +5,9 @@ import config
 from TelegramTextApp.TTA_scripts import markdown
 from datetime import datetime, timedelta
 
+VERSION ="2.0.0"
+print(f"Версия бота: {VERSION}")
+
 DAYS = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"]
 
 def now_day(day = None):

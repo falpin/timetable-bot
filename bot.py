@@ -5,14 +5,15 @@ import config
 from TelegramTextApp.TTA_scripts import markdown
 from datetime import datetime, timedelta
 
-DAYS = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"]
+DAYS = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"]
 
 def now_day(day = None):
     today = datetime.today().weekday()
-    if day == "tomorrow": 
-        today += 1
-    if today >= 6:
-        today = 0
+    if day:
+        if day == "tomorrow": 
+            today += 1
+        if today >= 6:
+            today = 0
     return DAYS[today]
 
 def SQL_request(request, params=(), all_data=None):  # Выполнение SQL-запросов
@@ -42,7 +43,7 @@ def formating_text(tta_data, text):
     user = SQL_request("SELECT * FROM users WHERE id = ?", (tta_data["user_id"],))
     text = text.format(
             user_group=user[2],
-            day_week="Понедельник",
+            day_week=now_day(),
         )
     return text
 
@@ -136,7 +137,7 @@ def schedule(tta_data=None):
     schedule = json.loads(response.text)
     
     if tta_data["data"] == "today":
-       tta_data["data"] = now_day()
+       tta_data["data"] = now_day("day")
     elif  tta_data["data"] == "tomorrow":
        tta_data["data"] = now_day("tomorrow") 
 
@@ -150,4 +151,4 @@ def schedule(tta_data=None):
 
 if __name__ == "__main__":
     from TelegramTextApp import TTA
-    TTA.start(config.API, "menus.json", debug=True, tta_experience=True, formating_text="formating_text")
+    TTA.start(config.API, "menus.json", debug=False, tta_experience=True, formating_text="formating_text")

@@ -5,9 +5,6 @@ import config
 from TelegramTextApp.TTA_scripts import markdown
 from datetime import datetime, timedelta
 
-VERSION ="2.0.0"
-print(f"Версия бота: {VERSION}")
-
 DAYS = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"]
 
 def now_day(day = None):
@@ -42,8 +39,13 @@ def create_users():
 
 create_users()
 
-def formating_text(tta_data, text):
-    user = SQL_request("SELECT * FROM users WHERE id = ?", (tta_data["user_id"],))
+def formating_text(tta_data, text, edit=None):
+    try: user_id = tta_data["telegram_data"].message.chat.id
+    except: user_id = tta_data["telegram_data"].chat.id
+    user = SQL_request("SELECT * FROM users WHERE id = ?", (user_id,))
+    if user is None:
+        bot_registration(tta_data)
+        user = SQL_request("SELECT * FROM users WHERE id = ?", (user_id,))
     text = text.format(
             user_group=user[2],
             day_week=now_day(),
@@ -52,12 +54,14 @@ def formating_text(tta_data, text):
 
 
 def save_complex(tta_data):
-    user_id = tta_data["user_id"]
-    if tta_data["data"]:
-        SQL_request("UPDATE users SET complex = ? WHERE id = ?", (tta_data["data"], user_id))
+    user_id = tta_data["telegram_data"].message.chat.id
+    data = tta_data["call_data"]["data"]
+    if data:
+        SQL_request("UPDATE users SET complex = ? WHERE id = ?", (data, user_id))
 
-def registration(tta_data):
-    user_id = tta_data["user_id"]
+def bot_registration(tta_data):
+    try: user_id = tta_data["telegram_data"].message.chat.id
+    except: user_id = tta_data["telegram_data"].chat.id
     user = SQL_request("SELECT * FROM users WHERE id = ?", (user_id,))
     if user is None:
         SQL_request("INSERT INTO users (id) VALUES (?)", (user_id,))
@@ -81,15 +85,16 @@ def format_schedule_to_text(schedule, week=None):
                 result += "\n"
     return result
 
-def get_courses(tta_data=None):
+def get_courses(tta_data):
     url = 'https://falpin.ru/api/get_groups'
     data = {"group": "ИСП-8-21"}
     response = requests.get(url)
     groups = json.loads(response.text)
+    user_id = tta_data["telegram_data"].message.chat.id
 
-    complex_name = tta_data["data"]
+    complex_name = tta_data["call_data"]["data"]
     if complex_name == None:
-        complex_name = SQL_request("SELECT complex FROM users WHERE id = ?", (tta_data["user_id"],))[0]
+        complex_name = SQL_request("SELECT complex FROM users WHERE id = ?", (user_id,))[0]
     if complex_name == "ros": complex_name = "Российская"
     if complex_name == "blux": complex_name = "Блюхера"
 
@@ -153,5 +158,7 @@ def schedule(tta_data=None):
     return text
 
 if __name__ == "__main__":
+    VERSION ="2.0.0"
+    print(f"Версия бота: {VERSION}")
     from TelegramTextApp import TTA
-    TTA.start(config.API, "menus.json", debug=False, tta_experience=True, formating_text="formating_text")
+    TTA.start(config.API, "menus", debug=True, tta_experience=True, formating_text="formating_text", app=True)

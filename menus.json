@@ -1,31 +1,39 @@
 {
-	"menus":{
-		"none_menu": {
-			"text":"Это меню ещё не создано",
-			"buttons":{},
-			"return":"main"
-		},
+	"bot":{
+        "name":"Расписание ЧЭнК",
+        "description":"Расписание колледжа ЧЭнК для всех корпусов\n\nАвторы: @falbue и @pinghoyk",
+        "short_description":"Мы предоставляем расписание с сайта ЧЭнКа, и не влияем на его содержание и изменение "
+    },
 
-		"update_tta": {
-			"text":"Бот был обновлён до новой версии!\nИспользуйте команду /start, что бы продолжить"
-		},
+	"menus":{
+		"error": {
+            "text": "Это меню ещё не создано",
+            "buttons": {},
+            "return": "main"
+        },
+
+        "error_command": {
+            "text": "Команда не найдена",
+            "buttons":{"return":"main"}
+        },
 
 		"main":{
+			"loading":"Загрузка..",
 			"text":"Выберите комплекс",
 			"buttons":{
 				"select_course:ros":"Российская",
 				"select_course:blux":"Блюхера"
 			},
-			"function":"registration"
+			"function":"bot_registration"
 
 		},
 
 		"select_course":{
 			"text":"Выберите курс",
-			"create_buttons":"get_courses",
+			"buttons":"get_courses",
 			"return":"main",
 			"function":"save_complex",
-			"loading":"_Получение курсов..._"
+			"loading":"_Получение курсов..."
 
 		},
 
@@ -33,13 +41,13 @@
 			"text":"Выберите группу",
 			"create_buttons":"select_group",
 			"return":"select_course",
-			"width":"4",
+			"width":4,
 			"loading":"_Получение групп..._"
 
 		},
 
 		"select_schedule":{
-			"width":"3",
+			"width":3,
 			"text":"*Группа:* _{user_group}_\n*Сегодня* __{day_week}__",
 			"buttons":{
 				"day:Понедельник":"Понедельник",
@@ -89,7 +97,7 @@
 		}
 	},
 
-	"general_buttons":{
+	"var_buttons":{
 		"return":"< Назад",
 		"admin":"Администратор",
 		"notification":"Прочитано"

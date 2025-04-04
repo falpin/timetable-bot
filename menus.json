@@ -1,21 +1,21 @@
 {
 	"bot":{
-        "name":"Расписание ЧЭнК",
-        "description":"Расписание колледжа ЧЭнК для всех корпусов\n\nАвторы: @falbue и @pinghoyk",
-        "short_description":"Мы предоставляем расписание с сайта ЧЭнКа, и не влияем на его содержание и изменение "
-    },
+		"name":"Расписание ЧЭнК",
+		"description":"Расписание колледжа ЧЭнК для всех корпусов\n\nАвторы: @falbue и @pinghoyk",
+		"short_description":"Мы предоставляем расписание с сайта ЧЭнКа, и не влияем на его содержание и изменение "
+	},
 
 	"menus":{
 		"error": {
-            "text": "Это меню ещё не создано",
-            "buttons": {},
-            "return": "main"
-        },
+			"text": "Это меню ещё не создано",
+			"buttons": {},
+			"return": "main"
+		},
 
-        "error_command": {
-            "text": "Команда не найдена",
-            "buttons":{"return":"main"}
-        },
+		"error_command": {
+			"text": "Команда не найдена",
+			"buttons":{"return":"main"}
+		},
 
 		"main":{
 			"loading":"Загрузка..",
@@ -57,11 +57,45 @@
 				"day:Пятница":"Пятница",
 				"day:Суббота":"Суббота",
 				"url:https://falpin.ru/schedule/{user_group}":"Открыть",
-				"day:full":"Неделя"
+				"day:full":"Неделя",
+				"admin":"admin"
 			},
 			"return":"select_course",
 			"function":"insert_group"
 		},
+
+		"admin":{
+			"text":"Панель администратора",
+			"buttons":{
+				"news":"Рассылка"
+			},
+			"return":"select_schedule"
+		},
+
+		"news":{
+            "text":"Введите текст, для рассылки",
+            "return":"admin",
+            "handler": {
+                "function":"newsletter",
+                "menu":"news_send"
+            }
+        },
+
+        "news_send":{
+            "text":"Рассылка отправлена",
+            "return":"admin",
+            "send":{
+                "menu":"newsletter_send",
+                "recipient":"all"
+            }
+        },
+
+        "newsletter_send":{
+            "text":"{input_text}",
+            "buttons":{
+                "notification":"notification"
+            }
+        },
 
 		"day":{
 			"function":"schedule",
@@ -99,7 +133,10 @@
 
 	"var_buttons":{
 		"return":"< Назад",
-		"admin":"Администратор",
+		"admin": {
+			"text":"Администратор",
+			"role":"admin"
+		},
 		"notification":"Прочитано"
 	}
 }

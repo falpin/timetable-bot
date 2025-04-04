@@ -39,6 +39,9 @@ def create_users():
 
 create_users()
 
+def newsletter(tta_data):
+    pass
+
 def formating_text(tta_data, text, edit=None):
     try: user_id = tta_data["telegram_data"].message.chat.id
     except: user_id = tta_data["telegram_data"].chat.id
@@ -49,6 +52,7 @@ def formating_text(tta_data, text, edit=None):
     text = text.format(
             user_group=user[2],
             day_week=now_day(),
+            input_text=tta_data["call_data"].get("input_text"),
         )
     return text
 
@@ -165,7 +169,7 @@ def schedule(tta_data):
     return tta_data
 
 if __name__ == "__main__":
-    VERSION ="2.1.0"
+    VERSION ="2.2.0"
     print(f"Версия бота: {VERSION}")
     from TelegramTextApp import TTA
     TTA.start(config.API, "menus", debug=True, tta_experience=True, formating_text="formating_text", app=False)

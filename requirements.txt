@@ -1,0 +1,2 @@
+requests
+TelegramTextApp==0.5.9

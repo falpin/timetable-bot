@@ -39,7 +39,7 @@
 
 		"select_group":{
 			"text":"Выберите группу",
-			"create_buttons":"select_group",
+			"buttons":"select_group",
 			"return":"select_course",
 			"width":4,
 			"loading":"_Получение групп..._"

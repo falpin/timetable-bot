@@ -91,6 +91,7 @@ def get_courses(tta_data):
     response = requests.get(url)
     groups = json.loads(response.text)
     user_id = tta_data["telegram_data"].message.chat.id
+    
 
     complex_name = tta_data["call_data"]["data"]
     if complex_name == None:
@@ -115,9 +116,10 @@ def select_group(tta_data=None):
     data = {"group": "ИСП-8-21"}
     response = requests.get(url)
     groups = json.loads(response.text)
+    user_id = tta_data["telegram_data"].message.chat.id
 
-    select_course = tta_data["data"]
-    complex_name = SQL_request("SELECT complex FROM users WHERE id = ?", (tta_data["user_id"],))[0]
+    select_course = tta_data["call_data"]["data"]
+    complex_name = SQL_request("SELECT complex FROM users WHERE id = ?", (user_id,))[0]
     if complex_name == "ros": complex_name = "Российская"
     if complex_name == "blux": complex_name = "Блюхера"
 
@@ -130,35 +132,40 @@ def select_group(tta_data=None):
 
     return buttons
 
-def insert_group(tta_data=None):
-    if tta_data["data"]:
-        SQL_request("UPDATE users SET user_group = ? WHERE id = ?", (tta_data["data"], tta_data['user_id']))
+def insert_group(tta_data):
+    if tta_data['call_data']["data"]:
+        user_id = tta_data["telegram_data"].message.chat.id
+        SQL_request("UPDATE users SET user_group = ? WHERE id = ?", (tta_data["call_data"]["data"], user_id))
 
-def schedule(tta_data=None):
+def schedule(tta_data):
     text = "Расписание не найдено :\("
     url = 'https://falpin.ru/api/get_schedule'
-    user_group = SQL_request("SELECT user_group FROM users WHERE id = ?", (tta_data["user_id"],))[0]
+    try:user_id = tta_data["telegram_data"].message.chat.id
+    except:user_id = tta_data["telegram_data"].chat.id
+
+    user_group = SQL_request("SELECT user_group FROM users WHERE id = ?", (user_id,))[0]
     if user_group is None:
         return "Сначала выберите группу\!"
     data = {"group": user_group}
     response = requests.post(url, json=data)
     schedule = json.loads(response.text)
     
-    if tta_data["data"] == "today":
-       tta_data["data"] = now_day("day")
-    elif  tta_data["data"] == "tomorrow":
-       tta_data["data"] = now_day("tomorrow") 
+    if tta_data["call_data"]["data"] == "today":
+       tta_data["call_data"]["data"] = now_day("day")
+    elif  tta_data["call_data"]["data"] == "tomorrow":
+       tta_data["call_data"]["data"] = now_day("tomorrow") 
 
-    if tta_data['data'] == 'full':
+    if tta_data["call_data"]["data"] == 'full':
         text = format_schedule_to_text(schedule['schedule'], week=True)
     else:
         for date, info in schedule['schedule'].items():
-            if tta_data['data'] in date:
+            if tta_data["call_data"]["data"] in date:
                 text = format_schedule_to_text( {date: info})
-    return text
+    tta_data["menu_data"]["text"] = text
+    return tta_data
 
 if __name__ == "__main__":
-    VERSION ="2.0.0"
+    VERSION ="2.1.0"
     print(f"Версия бота: {VERSION}")
     from TelegramTextApp import TTA
-    TTA.start(config.API, "menus", debug=True, tta_experience=True, formating_text="formating_text", app=True)
+    TTA.start(config.API, "menus", debug=True, tta_experience=True, formating_text="formating_text", app=False)
